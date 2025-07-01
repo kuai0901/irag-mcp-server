@@ -15,7 +15,7 @@
 }
 ```
 
-**说明**: 当不指定模型时，将使用配置文件中设置的默认模型（通过`MODEL`环境变量配置）。
+**说明**: 模型通过配置文件的`MODEL`环境变量设置，不在请求中指定。
 
 ### 指定模型和尺寸
 
@@ -24,62 +24,38 @@
   "name": "generate_image",
   "arguments": {
     "prompt": "现代简约风格的客厅设计",
-    "model": "irag-1.0",
     "size": "1024x768",
     "n": 2
   }
 }
 ```
 
-**说明**: 显式指定模型会覆盖默认配置。如果配置了`MODEL=flux.1-schnell`，但请求中指定了`"model": "irag-1.0"`，则会使用irag-1.0模型。
+**说明**: 图片尺寸最大支持1024x1024，模型通过配置文件设置。
 
-## 模型配置示例
+## 模型配置说明
 
-### 使用默认模型配置
+模型通过配置文件的`MODEL`环境变量设置：
 
-在`.env`文件中设置默认模型：
+### 设置默认模型
+
+在`.env`文件中设置：
 ```env
-MODEL=irag-1.0
+MODEL=irag-1.0          # 快速生成，适合日常使用
+# 或
+MODEL=flux.1-schnell    # 高质量生成，支持更多参数
 ```
 
-然后在请求中无需指定模型：
-```json
-{
-  "name": "generate_image",
-  "arguments": {
-    "prompt": "美丽的日落风景"
-  }
-}
-```
+### 使用高级参数
 
-### 切换默认模型
-
-将默认模型改为flux.1-schnell：
-```env
-MODEL=flux.1-schnell
-```
-
-现在所有不指定模型的请求都会使用flux.1-schnell：
+当配置为`flux.1-schnell`模型时，可以使用高级参数：
 ```json
 {
   "name": "generate_image",
   "arguments": {
     "prompt": "科幻风格的机器人",
     "steps": 20,
-    "guidance": 7.5
-  }
-}
-```
-
-### 临时覆盖默认模型
-
-即使配置了`MODEL=flux.1-schnell`，仍可在请求中指定其他模型：
-```json
-{
-  "name": "generate_image",
-  "arguments": {
-    "prompt": "快速生成的概念图",
-    "model": "irag-1.0"
+    "guidance": 7.5,
+    "seed": 12345
   }
 }
 ```
@@ -93,8 +69,7 @@ MODEL=flux.1-schnell
   "name": "generate_image",
   "arguments": {
     "prompt": "A futuristic cityscape at sunset with flying cars",
-    "model": "flux.1-schnell",
-    "size": "2048x1152",
+    "size": "1024x1024",
     "steps": 20,
     "seed": 12345,
     "guidance": 7.5
@@ -109,7 +84,6 @@ MODEL=flux.1-schnell
   "name": "generate_image",
   "arguments": {
     "prompt": "将这张图片转换为水彩画风格",
-    "model": "irag-1.0",
     "refer_image": "https://example.com/reference-image.jpg",
     "size": "1024x1024"
   }

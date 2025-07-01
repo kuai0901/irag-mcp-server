@@ -17,8 +17,7 @@ const generationRequestSchema = z.object({
   user: z.string().optional(),
   n: z.number().int().min(1).max(4).optional(),
   size: z.enum([
-    '512x512', '768x768', '1024x768', '1024x1024', '1536x1536',
-    '2048x1152', '2048x1536', '2048x2048', '576x1024', '1152x2048'
+    '512x512', '768x768', '1024x768', '1024x1024'
   ]).optional(),
   steps: z.number().int().min(1).max(50).optional(),
   seed: z.number().int().min(0).max(4294967295).optional(),
@@ -184,8 +183,7 @@ export class IragClient {
    */
   getSupportedSizes(): ImageSize[] {
     return [
-      '512x512', '768x768', '1024x768', '1024x1024', '1536x1536',
-      '2048x1152', '2048x1536', '2048x2048', '576x1024', '1152x2048'
+      '512x512', '768x768', '1024x768', '1024x1024'
     ];
   }
 

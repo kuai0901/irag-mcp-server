@@ -6,7 +6,6 @@ import {
   Tool,
   CallToolResult,
   TextContent,
-  ImageContent,
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 
@@ -18,12 +17,10 @@ import type { GenerateImageParams, ServerConfig, IragGenerationRequest } from '.
 // 工具参数验证schema
 const generateImageParamsSchema = z.object({
   prompt: z.string().min(1, '提示词不能为空'),
-  model: z.enum(['irag-1.0', 'flux.1-schnell']).optional(),
   refer_image: z.string().url().optional(),
   n: z.number().int().min(1).max(4).optional(),
   size: z.enum([
-    '512x512', '768x768', '1024x768', '1024x1024', '1536x1536',
-    '2048x1152', '2048x1536', '2048x2048', '576x1024', '1152x2048'
+    '512x512', '768x768', '1024x768', '1024x1024'
   ]).optional(),
   steps: z.number().int().min(1).max(50).optional(),
   seed: z.number().int().min(0).max(4294967295).optional(),
@@ -83,12 +80,7 @@ export class McpServer {
                 type: 'string',
                 description: '图片生成提示词，描述要生成的图片内容',
               },
-              model: {
-                type: 'string',
-                enum: ['irag-1.0', 'flux.1-schnell'],
-                description: `使用的模型，默认为${this.config.defaultModel}`,
-                default: this.config.defaultModel,
-              },
+
               refer_image: {
                 type: 'string',
                 format: 'uri',
@@ -104,8 +96,7 @@ export class McpServer {
               size: {
                 type: 'string',
                 enum: [
-                  '512x512', '768x768', '1024x768', '1024x1024', '1536x1536',
-                  '2048x1152', '2048x1536', '2048x2048', '576x1024', '1152x2048'
+                  '512x512', '768x768', '1024x768', '1024x1024'
                 ],
                 description: '图片尺寸，默认为1024x1024',
                 default: '1024x1024',
@@ -181,7 +172,7 @@ export class McpServer {
     try {
       // 调用百度iRAG API
       const requestParams: IragGenerationRequest = {
-        model: validatedParams.model || this.config.defaultModel,
+        model: this.config.defaultModel,
         prompt: validatedParams.prompt,
         n: validatedParams.n || 1,
         size: validatedParams.size || '1024x1024',
@@ -204,7 +195,7 @@ export class McpServer {
       const response = await this.iragClient.generateImage(requestParams);
 
       // 构建响应内容
-      const content: (TextContent | ImageContent)[] = [
+      const content: TextContent[] = [
         {
           type: 'text',
           text: `成功生成${response.data.length}张图片`,
@@ -219,16 +210,9 @@ export class McpServer {
         this.config.basePath
       );
 
-      // 添加图片内容
+      // 添加图片处理结果
       for (const [index, result] of imageResults.entries()) {
-        if (result.success && result.base64) {
-          // 添加图片内容
-          content.push({
-            type: 'image',
-            data: result.base64,
-            mimeType: 'image/png',
-          } as ImageContent);
-
+        if (result.success) {
           // 添加文本说明
           let textMessage = `图片 ${index + 1} 生成成功`;
           if (result.localPath) {

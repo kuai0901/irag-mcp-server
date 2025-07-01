@@ -6,9 +6,8 @@
 export type SupportedModel = 'irag-1.0' | 'flux.1-schnell';
 
 // 图片尺寸类型
-export type ImageSize = 
-  | '512x512' | '768x768' | '1024x768' | '1024x1024' | '1536x1536' 
-  | '2048x1152' | '2048x1536' | '2048x2048' | '576x1024' | '1152x2048';
+export type ImageSize =
+  | '512x512' | '768x768' | '1024x768' | '1024x1024';
 
 // 百度iRAG API请求参数
 export interface IragGenerationRequest {
@@ -44,7 +43,6 @@ export interface IragErrorResponse {
 // MCP工具参数
 export interface GenerateImageParams {
   prompt: string;
-  model?: SupportedModel | undefined;
   refer_image?: string | undefined;
   n?: number | undefined;
   size?: ImageSize | undefined;

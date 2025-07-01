@@ -10,7 +10,6 @@ import type { ResourceMode } from '../types/index.js';
 export interface ImageSaveResult {
   success: boolean;
   localPath?: string;
-  base64?: string;
   url: string;
   error?: string;
 }
@@ -57,18 +56,16 @@ export async function downloadAndSaveImage(
     });
     
     const buffer = Buffer.from(response.data);
-    const base64 = buffer.toString('base64');
-    
-    logger.debug('图片下载成功', { 
-      url, 
+
+    logger.debug('图片下载成功', {
+      url,
       size: buffer.length,
-      contentType: response.headers['content-type'] 
+      contentType: response.headers['content-type']
     });
-    
+
     const result: ImageSaveResult = {
       success: true,
       url,
-      base64,
     };
     
     // 如果是local模式，保存到本地文件
