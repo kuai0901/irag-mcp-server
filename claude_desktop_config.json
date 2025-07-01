@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "irag-image-generator": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "env": {
+        "BAIDU_API_KEY": "bce-v3/ALTAK-your-access-key/your-secret-key"
+      }
+    }
+  }
+}
